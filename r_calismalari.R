@@ -35,7 +35,7 @@ library(ggpubr)
 library(graphics)
 }
 
-eksiltilmis_veriler <- read_delim("C:/Users/ksyus/Documents/MEGAsync/@--AU NOTLAR/Veri Analizi Projesi/14-Kýbrýs Ercan (buharlaþma-rüzgar hýzý)/eksiltilmis_veriler.csv", ";",
+eksiltilmis_veriler <- read_delim("eksiltilmis_veriler.csv", ";",
                   escape_double = FALSE,
                   col_types = cols(trh = col_date(format = "%d.%m.%Y")), 
                   trim_ws = TRUE)
