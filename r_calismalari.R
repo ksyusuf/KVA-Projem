@@ -51,8 +51,6 @@ mean(eksiltilmis_veriler$buhr)  #'ortalama'
 
 geometric.mean(eksiltilmis_veriler$rzgr)   # geometrik ortalama
 geometric.mean(eksiltilmis_veriler$buhr, na.rm = TRUE) # demek ki buharýn sýfýr olduðu zaman var
-# 4077 veride 8 günde 0 deðeri var bunlarý 0,1 yapsam?
-# bu sekiz veri yüzünden geometrik ortalama sýfýr çýkýyor!?
 
 harmonic.mean(eksiltilmis_veriler$rzgr)    # harmonik ortalama
 harmonic.mean(eksiltilmis_veriler$buhr)   # verilerimde sýfýr var
@@ -60,10 +58,8 @@ harmonic.mean(eksiltilmis_veriler$buhr)   # verilerimde sýfýr var
 median(eksiltilmis_veriler$rzgr)
 median(eksiltilmis_veriler$buhr)    # medyan
 
-# aggregate(eksiltilmis_veriler$rzgr, list(eksiltilmis_veriler$buhr), median)
-
 Mode(eksiltilmis_veriler$rzgr)   # mod
-Mode(eksiltilmis_veriler$buhr)  # en çok tekrar edenden kaç tane var onu diyo galiba
+Mode(eksiltilmis_veriler$buhr)  
 }
 
 ### merkezi yayýlým ölçüleri
@@ -97,8 +93,7 @@ Mode(eksiltilmis_veriler$buhr)  # en çok tekrar edenden kaç tane var onu diyo ga
     
     gofMAD(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)  # ortalama mutlak sapma
     gofMAD(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)
-    meanabsdev(eksiltilmis_veriler$rzgr) # mamide çalýþýyo bende çalýþmýyo !!!
-    
+
     skew(eksiltilmis_veriler$rzgr, na.rm = FALSE, type = 3)   # çarpýklýk
     skew(eksiltilmis_veriler$buhr)
     
@@ -123,7 +118,6 @@ Mode(eksiltilmis_veriler$buhr)  # en çok tekrar edenden kaç tane var onu diyo ga
   AndersonDarlingTest(eksiltilmis_veriler$rzgr)   # Anderson-Darling Testi
   AndersonDarlingTest(eksiltilmis_veriler$buhr)
   
-  # D’Agostino’nun K Kare Normal Test bunu bulamadým
 }
 
 ### tek boyut için grafikler
@@ -158,16 +152,12 @@ Mode(eksiltilmis_veriler$buhr)  # en çok tekrar edenden kaç tane var onu diyo ga
        density = NULL,
        freq = FALSE)
   
-  hist(eksiltilmis_veriler$rzgr, breaks=c(70), ylim = c(0,0.4), freq=FALSE)   # KDE de bunu kullanabiliriz
-  # bunun çizgi þeklide gösterimiyle yapýcaz KDE yi
-  
+  hist(eksiltilmis_veriler$rzgr, breaks=c(70), ylim = c(0,0.4), freq=FALSE) 
+
   h <- hist(eksiltilmis_veriler$rzgr, ylim = c(0,1500), col=topo.colors(5), freq = TRUE)
   text(h$mids,h$counts,labels=h$counts, adj=c(0.5, -0.5))
-  # ylim parametresi y ekseninin limiti demek 
-  # þöyle kullanýrsýn ylim=c(0,1500) default NULL
-  
-  # histogramýn üstlerinden bir çizgi çiziyo iþte. ama
-  plotForecastErrors <- function(forecasterrors)
+
+    plotForecastErrors <- function(forecasterrors)
   {
     # make a histogram of the forecast errors:
     mybinsize <- IQR(forecasterrors)/4
@@ -230,26 +220,7 @@ boxplot(eksiltilmis_veriler[,-1],
 boxplot(eksiltilmis_veriler$buhr, horizontal = TRUE)   # yatay boxplot
 }
 
-# ýsý haritasý yapacaðýz (yapamadýk)
-{
-use_python('C:\\Program Files\\JetBrains\\PyCharm 2020.3.3\\bin\\pycharm64.exe')
-#importing required Python libraries/modules
-sns <- import('seaborn')
-plt <- import('matplotlib.pyplot')
-pd <- import('pandas')
-#using R's inbuilt AirPassengers dataset
-df <- eksiltilmis_veriler
-#converting Time-Series object into an R Dataframe 
-df1 <- data.frame(tapply(df, list(year = floor(time(df)), month = month.abb[cycle(df)]), c))
-df1 <- df1[month.abb]
-#building a heatmap using seaborn 
-#please note the function r_to_py() that converts R object into a python 
-sns$heatmap(r_to_py(df1), fmt="g", cmap ='viridis')
-#display the plot
-plt$show()
 
-# yapamadým
-}
 #----------------------------------------------------------
 
 # barplot, buna çok da gerek yok zaten histogramýmýz var
@@ -301,7 +272,7 @@ ggplot(data=eksiltilmis_veriler[,-1]) +
 }
 
 
-# Q-Q grafiði diye biþe
+# Q-Q grafiði
 {
 qqPlot(eksiltilmis_veriler$rzgr,
        main="Rüzgâr Hýzý Q-Q Grafiði",
@@ -310,7 +281,7 @@ qqPlot(eksiltilmis_veriler$buhr, main="Buharlaþma Q-Q Grafiði")
 qqnorm(eksiltilmis_veriler$rzgr)
 qqnorm(eksiltilmis_veriler$buhr)
 
-# ggplot üktüphanesi ile çizelim daha güzel
+# ggplot kütüphanesi ile çizelim daha güzel
 ggplot(eksiltilmis_veriler[,-1],
        aes(sample = rzgr, colour = factor(rzgr))) +
   stat_qq() +
@@ -348,73 +319,65 @@ zaman_serisi = plot(zoo(eksiltilmis_veriler$buhr,as.Date(eksiltilmis_veriler$trh
                     xlab="Zaman", ylab="Buharlaþma",col="red",
                     main="Buharlaþma Zaman Serisi")
 
-#renkli birleþik zaman serisi // lejant etleyemedim // manuel ekleriz
-ggplot(eksiltilmis_veriler, aes(trh)) +
-  geom_line(aes(y=rzgr), colour="#4e1c7f", alpha = 0.6) +
-  geom_line(aes(y=buhr), colour="red", alpha=0.6) +
-  theme_hc() +
-  scale_colour_hc() +
-  ggtitle("Birleþik Zaman Serisi") +
-  theme(plot.title = element_text(hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5)) +
-  labs(x = "Zaman", y = "Deðerler", color="legends")
-
-# bu þekilde logaritmik zaman serisi galiba.
-logsouvenirtimeseries <- log(eksiltilmis_veriler$rzgr)
-plot.ts(logsouvenirtimeseries,
-        main="Rüzgar Hýzý Logaritmik Zaman Serisi",
-        col="Purple")
-
 plot.ts(log(eksiltilmis_veriler$buhr),
         main="Buharlaþma Logaritmik Zaman Serisi",
         col="Purple")
 
-# zaman serisi foksiyonu
-plot.ts(eksiltilmis_veriler[,-1], plot.type = "single") # birleþik
-plot.ts(eksiltilmis_veriler[,-1], plot.type = "multiple", start = c(1991,1), frequency = 4)
-plot.ts(eksiltilmis_veriler$rzgr, frequency = 12, start = 1990) # çalýþmýyor ki
-# 3. fonksiyonda tarihlerde istediðimiz aralýðý alamýyoruz ki!?!?
-plot.ts(eksiltilmis_veriler$rzgr)
+{
+  ## rüzgar hýzý aylýk yýllýk haftalýk zaman serileri
+  ruzgar_ts2 <- xts(eksiltilmis_veriler[,-1], order.by = eksiltilmis_veriler$trh)
+  
+  haftalik_zs <- apply.weekly(ruzgar_ts2,FUN = mean)
+  aylik_zs <- apply.monthly(ruzgar_ts2, FUN = mean)
+  yilllik_zs <- apply.yearly(ruzgar_ts2, FUN = mean)
+  gunluk_zs <- apply.daily(ruzgar_ts2, FUN = mean)
+  
+  plot.ts(yilllik_zs[,1],
+          xlab="Zaman", ylab="Yýllýk",col="red")
+  plot.ts(aylik_zs[,1],
+          xlab="Zaman", ylab="Aylýk",col="red",)
+  
+  plot.ts(haftalik_zs[,1],
+          xlab="Zaman", ylab="Haftalýk",col="red",)
+  
+  plot.ts(gunluk_zs[,1],
+          xlab="Zaman", ylab="Günlük",col="red",)
+  
+  ## eksen isimlerini deðiþtiremedim. manuel olarak ayarlayacaðým.
+  
+  
+  eksiltilmis_aylik = apply.yearly(xts(eksiltilmis_veriler, order.by = eksiltilmis_veriler$trh), FUN=mean)
+  plot.ts(aylik_zs, plot.type = "multiple")
+  plot.ts(eksiltilmis_veriler[,-1], plot.type = "multiple")
+  aa_kontrol = aylik_zs[,-1]
+  
+  ## buharlaþma aylýk yýllýk haftalýk zaman serileri
+  buharlasma_ts2 <- xts(eksiltilmis_veriler$buhr, order.by = eksiltilmis_veriler$trh)
+  
+  haftalik_zs_b <- apply.weekly(buharlasma_ts2,FUN = mean)
+  aylik_zs_b <- apply.monthly(buharlasma_ts2, FUN = mean)
+  yilllik_zs_b <- apply.yearly(buharlasma_ts2, FUN = mean)
+  gunluk_zs_b <- apply.daily(buharlasma_ts2, FUN = mean)
+  
+  plot.ts(yilllik_zs_b[,1],
+          xlab="Zaman", ylab="Yýllýk",col="red")
+  
+  plot.ts(aylik_zs_b[,1],
+          xlab="Zaman", ylab="Aylýk",col="red")
+  
+  plot.ts(haftalik_zs_b[,1],
+          xlab="Zaman", ylab="Haftalýk",col="red")
+  
+  plot.ts(gunluk_zs_b[,1],
+          xlab="Zaman", ylab="Günlük",col="red")
+  
+  
+  
+  plot(zoo(c(2), as.Date(eksiltilmis_veriler$trh, "%d.%m.%Y")),
+       xlab="Zaman", ylab=" ",col="red")
+}
 
-Data_ts <- ts(data = eksiltilmis_veriler$rzgr,
-              start = c(1991, 07, 1),
-              frequency = 365.25)
-plot(Data_ts)
-autoplot(Data_ts) +
-  ggtitle("Böyle bir þey yok") +
-  xlab("Ay") +
-  ylab("Rüzgar")
 
-autoplot(zaman_serisi)
-
-ruzgar_ts = ts(eksiltilmis_veriler$rzgr,
-               frequency = 365,
-               start = c(2002, 11))
-plot.ts(ruzgar_ts, main= "Rüzgar Hýzý Zaman Serisi" , xlab= 
-          "Zaman", ylab= "Rüzgar Hýzý" )
-
-# birleþik zaman serileri þöyle yapýlýyor
-birlesik_ts_veriler <- matrix(c(eksiltilmis_veriler$rzgr,eksiltilmis_veriler$buhr),nrow = 4080)
-birlesik.timeseries <- ts(birlesik_ts_veriler,start = c(1991,07),frequency = 12)
-print(birlesik.timeseries)
-plot(birlesik.timeseries)
-
-# zaman serisine bir þeyler yapýyor
-# zaman serimizden belli aralýklarý alabildiðimizde kullanabiliriz bunu
-skirtsseries <- ts(eksiltilmis_veriler$rzgr,start=c(1991))
-skirtsseriesforecasts <- HoltWinters(skirtsseries, gamma=FALSE)
-plot(skirtsseriesforecasts)
-
-# zaman serisi denemeleri
-tsData <- eksiltilmis_veriler[, "trh"]
-decomposedRes <- decompose(x=tsData, 
-                           type="multiplicative")
-plot (decomposedRes)
-
-# ts denemeleri
-ts(eksiltilmis_veriler$rzgr, start = c(1991,7), frequency = 12)
-#dikkat ettiysen o ayýn ilk deðerini alýp geçiyor
-# yani ayýn ortalamasýný almýyor. neyse pythonla yaparýz ekleriz sonra
 }
 
 
@@ -433,8 +396,6 @@ pacf(eksiltilmis_veriler$rzgr,
 pacf(eksiltilmis_veriler$buhr,
      main="Buharlaþmanýn Kýsmi Otokorelasyon Grafiði")
 
-# deðiþik bir þeyler yapýyor, sonra bakarýz
-ar(eksiltilmis_veriler$rzgr, method = "ols")
 }
 
 
@@ -455,8 +416,6 @@ pie <- bp + coord_polar("y", start=0)
 pie
 }
 
-
-line(eksiltilmis_veriler$rzgr)  # bu ne !? ne katsayýsý veriyor?
 
 
 # keman grafiði (violin plot)
@@ -506,13 +465,12 @@ corrplot(korelasyon,
 corrplot(cor(eksiltilmis_veriler[,-1]), method="ellipse", type="upper")
 corrplot(cor(eksiltilmis_veriler[,-1]), method="number", type="lower")
 corrplot.mixed(cor(eksiltilmis_veriler[,-1]))
-# incelersin bunlarý, büssürü þey var
 
-# korelasyon haritasý mý ne?!
+
 ggcorr(eksiltilmis_veriler[,-1], method = "pairwise")
 }
 
-# koveryans
+# kovaryans
 {
 plot(cov(eksiltilmis_veriler[,-1], use = "everything"),
      main="Kovaryans",
@@ -521,13 +479,13 @@ plot(cov(eksiltilmis_veriler[,-1], use = "everything"),
 cov(eksiltilmis_veriler[,-1])  # sayýsal veri
 }
 
-# regresyon ANLAMADIM -projede var ama geliþtirilecek-
+# regresyon -projede var ama geliþtirilecek-
 {
 lmn <- lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr)
 abline(plot(lmn), main="Rüzgâr Hýzý ve Buharlaþma") #Add a regression line
 abline(lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr))
 lmTemp = lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr) #Create the linear regression
-# burada verdiði çizimler anova sonuçlarý imiþ
+
 
 abline(lmTemp, cex = 1.3, pch = 16, xlab = "Weight in Kg", ylab = "Height in cm")
 }
@@ -539,8 +497,8 @@ pairs(eksiltilmis_veriler[,-1],
       main = "Daðýlým Grafikleri",
       labels = c("Rüzgâr Hýzý", "Buharlaþma"))   # bu R ýn kendi correlogramý
 
-# bubble plot yapmaya çalýþtýk
-# büyüklükler iayarlayamadýk
+# bubble plot yapmaya çalýþtým
+# büyüklükleri ayarlayama
 {
 data <- eksiltilmis_veriler[,-1] 
 ggplot(data, aes(x=eksiltilmis_veriler$buhr,
@@ -575,7 +533,7 @@ scatterplot(eksiltilmis_veriler$rzgr,
             ellipse=TRUE)
 }
 
-# scatterplor + histogram -- müthiþ
+# scatterplor + histogram
 {
   p <- eksiltilmis_veriler[,-1] %>%
     ggplot( aes(y=eksiltilmis_veriler$rzgr,
@@ -707,23 +665,4 @@ var.test(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)
 }
 
 
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#     ------  3D PLOT  ------
-{
-cone <- function(x, y){
-        sqrt(x^2+y^2)
-}
-x <- y <- seq(-1, 1, length = 20)
-z <- outer(x, y, cone)
-
-persp(x, y, z,
-      main="Ayyy",
-      zlab = "Height",
-      theta = 30, phi = 30,
-      col = "springgreen", shade = 0.4)
-
-persp(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr, eksiltilmis_veriler$trh)
-#'sanýrým parametrelerin fonksiyon olmasý gerekiyor'
 }
