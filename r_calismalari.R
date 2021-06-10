@@ -481,13 +481,28 @@ cov(eksiltilmis_veriler[,-1])  # sayýsal veri
 
 # regresyon -projede var ama geliþtirilecek-
 {
-lmn <- lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr)
-abline(plot(lmn), main="Rüzgâr Hýzý ve Buharlaþma") #Add a regression line
-abline(lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr))
-lmTemp = lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr) #Create the linear regression
-
-
-abline(lmTemp, cex = 1.3, pch = 16, xlab = "Weight in Kg", ylab = "Height in cm")
+  lmn <- lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr)
+  abline(plot(lmn), main="Rüzgâr Hýzý ve Buharlaþma") #Add a regression line
+  abline(lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr))
+  lmTemp = lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr) #Create the linear regression
+  # burada verdiði çizimler anova sonuçlarý imiþ
+  
+  abline(lmTemp, cex = 1.3, pch = 16, xlab = "Weight in Kg", ylab = "Height in cm")
+  
+  relation <- lm(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr)
+  
+  abline(plot(relation))
+  
+  plot(eksiltilmis_veriler$rzgr~eksiltilmis_veriler$buhr, data = eksiltilmis_veriler)
+  qqnorm(eksiltilmis_veriler$buhr, main = "Normallik Grafiði")
+  qqline(eksiltilmis_veriler$buhr)
+  
+  sonuc <- lm(eksiltilmis_veriler$rzgr ~ eksiltilmis_veriler$buhr)
+  
+  summary(sonuc)
+  
+  par(mfrow=c(2,2))
+  plot(sonuc)
 }
 
 
