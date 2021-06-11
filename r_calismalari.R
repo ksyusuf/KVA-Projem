@@ -91,8 +91,8 @@ Mode(eksiltilmis_veriler$buhr)
     mad(eksiltilmis_veriler$rzgr)  # medyan mutlak sapma
     mad(eksiltilmis_veriler$buhr)
     
-    gofMAD(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)  # ortalama mutlak sapma
-    gofMAD(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)
+    MeanAD(eksiltilmis_veriler$rzgr)  # ortalama mutlak sapma
+    MeanAD(eksiltilmis_veriler$buhr)
 
     skew(eksiltilmis_veriler$rzgr, na.rm = FALSE, type = 3)   # çarpýklýk
     skew(eksiltilmis_veriler$buhr)
@@ -106,8 +106,20 @@ Mode(eksiltilmis_veriler$buhr)
   shapiro.test(eksiltilmis_veriler$rzgr)  # Shapiro-Wilk Test
   shapiro.test(eksiltilmis_veriler$buhr)
   
-  ks.test(eksiltilmis_veriler$rzgr, alternative = "less")  # Kolmogorov Smirnov Test
+  # Kolmogorov Smirnov Test
+  ks.test(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)
   ks.test(eksiltilmis_veriler$buhr, eksiltilmis_veriler$rzgr)  # hatalý
+  ks.test(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)
+  plot(ecdf(eksiltilmis_veriler$rzgr), 
+       xlim = range(c(eksiltilmis_veriler$rzgr, eksiltilmis_veriler$buhr)),
+       xlab = "Deðerler",
+       col = "blue",
+       main = "Kolmogorov Smirnov Testi")
+  plot(ecdf(eksiltilmis_veriler$buhr), 
+       add = TRUE, 
+       lty = "dashed",
+       col = "red")
+  ks.test(eksiltilmis_veriler[,-1], "pnorm")
   
   LillieTest(eksiltilmis_veriler$rzgr)  # Lilliefors test
   LillieTest(eksiltilmis_veriler$buhr)
